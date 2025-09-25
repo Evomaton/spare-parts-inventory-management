@@ -296,8 +296,9 @@ def login_interface():
             submitted = st.form_submit_button("🚀 Login", use_container_width=True)
             
             if submitted:
-                # Simple authentication (replace with your actual authentication logic)
+                print(f"submitted :{submitted}")
                 if authenticate_user(username, password):
+
                     st.session_state.authenticated = True
                     st.session_state.username = username
                     st.success("Login successful! Redirecting...")
@@ -316,11 +317,11 @@ def login_interface():
         # """)
 
 def authenticate_user(username, password):
-    username = st.secrets["login"]["username"]
-    password = st.secrets["login"]["password"]
+    stored_username = st.secrets["login"]["username"]
+    stored_password = st.secrets["login"]["password"]
     # Demo credentials dictionary
     valid_credentials = {
-        username: password,
+        stored_username: stored_password,
 
     }
     
