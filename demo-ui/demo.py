@@ -362,7 +362,8 @@ def main():
     st.write("🔍 **File System Debug:**")
 
     try:
-        files = os.listdir('data')
+        data_path = get_data_path()
+        files = os.listdir(data_path)
         st.success(f"✅ Found data folder with {len(files)} files: {files}")
     except:
         st.error("❌ Cannot access data folder")
