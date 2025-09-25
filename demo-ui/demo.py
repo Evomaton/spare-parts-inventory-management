@@ -101,12 +101,33 @@ def create_kpi_card(value, label, color="#667eea"):
         <div class="kpi-label">{label}</div>
     </div>
     """
+def get_data_path():
+    """Get correct data path for both local and cloud deployment"""
+    if os.path.exists('demo-ui/data'):
+        # Running from repo root (Streamlit Cloud)
+        return 'demo-ui/data/'
+    elif os.path.exists('data'):
+        # Running from demo-ui folder (Local)
+        return 'data/'
+    else:
+        # Fallback
+        return 'data/'
+
+def get_ref_path():
+    """Get correct ref path for both local and cloud deployment"""
+    if os.path.exists('demo-ui/ref'):
+        return 'demo-ui/ref/'
+    elif os.path.exists('ref'):
+        return 'ref/'
+    else:
+        return 'ref/'
 
 @st.cache_data
 def load_and_process_data():
     """Load and process the CSV data from background"""
     try:
-        df = pd.read_csv('data\\daikins_spare_parts_proc_cons_melted_merged_meta_combined.csv')
+        data_path = get_data_path()
+        df = pd.read_csv(f'{data_path}daikins_spare_parts_proc_cons_melted_merged_meta_combined.csv')
         df['MONTH_YEAR'] = pd.to_datetime(df['MONTH_YEAR'])
         df['Classification_Revised'] = df.apply(
             lambda row: row['Classification'] if row['Cons_Demand_TD'] == 'Exists' else "No Demand",
@@ -316,9 +337,7 @@ def logout():
 # Main dashboard
 def main():
         
-    if os.path.exists('demo-ui') and os.getcwd().endswith('demo-ui') == False:
-        os.chdir('demo-ui')
-        st.info("Changed working directory to demo-ui")
+
     # Initialize session state
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
@@ -470,11 +489,12 @@ def main():
             
             # Reference image (if exists)
             try:
-                if os.path.exists('ref/demand_classification.png'):
-                    ref_image = Image.open('ref/demand_classification.png')
+                ref_path = get_ref_path()
+                if os.path.exists(f'{ref_path}demand_classification.png'):
+                    ref_image = Image.open(f'{ref_path}demand_classification.png')
                     st.image(ref_image, caption="Demand Classification Reference", use_column_width=True)
             except:
-                st.info("Reference image not found at 'ref/demand_classification.png'")
+                st.info(f"Reference image not found at '{ref_path}demand_classification.png'")
             
             # Classification bar chart
             st.markdown('<h3 class="section-header">📊 Classification Distribution</h3>', unsafe_allow_html=True)
@@ -553,11 +573,12 @@ def main():
             
             # Reference image (if exists)
             try:
-                if os.path.exists('ref/spare_part_modelling_approaches.png'):
-                    ref_image = Image.open('ref/spare_part_modelling_approaches.png')
+                ref_path = get_ref_path()
+                if os.path.exists(f'{ref_path}spare_part_modelling_approaches.png'):
+                    ref_image = Image.open(f'{ref_path}spare_part_modelling_approaches.png')
                     st.image(ref_image, caption="Demand Classification Reference", use_column_width=True)
             except:
-                st.info("Reference image not found at 'ref/spare_part_modelling_approaches.png'")
+                st.info(f"Reference image not found at '{ref_path}spare_part_modelling_approaches.png'")
 
             
             # NEW SECTION: Modelling Approaches
@@ -565,11 +586,12 @@ def main():
             
             # Reference image (if exists)
             try:
-                if os.path.exists('ref/ML_Approach.png'):
-                    ref_image = Image.open('ref/ML_Approach.png')
+                ref_path = get_ref_path()
+                if os.path.exists(f'{ref_path}ML_Approach.png'):
+                    ref_image = Image.open(f'{ref_path}ML_Approach.png')
                     st.image(ref_image, caption="Demand Classification Reference", use_column_width=True)
             except:
-                st.info("Reference image not found at 'ref/ML_Approach.png'")
+                st.info(f"Reference image not found at '{ref_path}ML_Approach.png'")
 
             # NEW SECTION: Training vs Prediction Analysis
             st.markdown('<h2 class="section-header"> Training vs Prediction</h2>', unsafe_allow_html=True)
@@ -578,7 +600,8 @@ def main():
             def load_training_data():
                 """Load training data"""
                 try:
-                    return pd.read_csv('data\\daikins_spare_parts_demand_prod_merged_r2_meta.csv')
+                    data_path = get_data_path()
+                    return pd.read_csv(f'{data_path}daikins_spare_parts_demand_prod_merged_r2_meta.csv')
                 except:
                     return None
 
@@ -586,7 +609,8 @@ def main():
             def load_prediction_data():
                 """Load prediction data"""
                 try:
-                    return pd.read_csv('data\\daikins_spare_parts_final_long_croston.csv')
+                    data_path = get_data_path()
+                    return pd.read_csv(f'{data_path}daikins_spare_parts_final_long_croston.csv')
                 except:
                     return None
 
@@ -758,8 +782,8 @@ def main():
 
             # Get common PartCodes
             common_parts = get_common_partcodes(training_df, prediction_df)
-
-            parts_list = pd.read_csv("data\\parts.txt", header=None)[0].tolist()
+            data_path = get_data_path()
+            parts_list = pd.read_csv(f"{data_path}parts.txt", header=None)[0].tolist()
             print(parts_list)
             common_parts = parts_list
 
