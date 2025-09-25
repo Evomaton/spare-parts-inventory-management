@@ -106,7 +106,7 @@ def create_kpi_card(value, label, color="#667eea"):
 def load_and_process_data():
     """Load and process the CSV data from background"""
     try:
-        df = pd.read_csv('data/daikins_spare_parts_proc_cons_melted_merged_meta_combined.csv')
+        df = pd.read_csv('data\\daikins_spare_parts_proc_cons_melted_merged_meta_combined.csv')
         df['MONTH_YEAR'] = pd.to_datetime(df['MONTH_YEAR'])
         df['Classification_Revised'] = df.apply(
             lambda row: row['Classification'] if row['Cons_Demand_TD'] == 'Exists' else "No Demand",
@@ -333,8 +333,18 @@ def main():
         if st.button("🚪 Logout"):
             logout()
         st.markdown("---")
+
+    
     st.markdown('<h1 class="main-header">🔧 Spare Parts Demand Forecast Demo</h1>', unsafe_allow_html=True)
     
+    st.write("🔍 **File System Debug:**")
+
+    try:
+        files = os.listdir('data')
+        st.success(f"✅ Found data folder with {len(files)} files: {files}")
+    except:
+        st.error("❌ Cannot access data folder")
+        st.write("Current directory contents:", os.listdir('.'))
     # Load data from background
     with st.spinner('Loading spare parts data...'):
         df = load_and_process_data()
@@ -565,7 +575,7 @@ def main():
             def load_training_data():
                 """Load training data"""
                 try:
-                    return pd.read_csv('data/daikins_spare_parts_demand_prod_merged_r2_meta.csv')
+                    return pd.read_csv('data\\daikins_spare_parts_demand_prod_merged_r2_meta.csv')
                 except:
                     return None
 
@@ -573,7 +583,7 @@ def main():
             def load_prediction_data():
                 """Load prediction data"""
                 try:
-                    return pd.read_csv('data/daikins_spare_parts_final_long_croston.csv')
+                    return pd.read_csv('data\\daikins_spare_parts_final_long_croston.csv')
                 except:
                     return None
 
@@ -746,7 +756,7 @@ def main():
             # Get common PartCodes
             common_parts = get_common_partcodes(training_df, prediction_df)
 
-            parts_list = pd.read_csv("data/parts.txt", header=None)[0].tolist()
+            parts_list = pd.read_csv("data\\parts.txt", header=None)[0].tolist()
             print(parts_list)
             common_parts = parts_list
 
