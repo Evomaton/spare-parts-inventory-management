@@ -315,7 +315,10 @@ def logout():
 
 # Main dashboard
 def main():
-
+        
+    if os.path.exists('demo-ui') and os.getcwd().endswith('demo-ui') == False:
+        os.chdir('demo-ui')
+        st.info("Changed working directory to demo-ui")
     # Initialize session state
     if 'authenticated' not in st.session_state:
         st.session_state.authenticated = False
